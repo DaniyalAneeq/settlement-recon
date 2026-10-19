@@ -45,5 +45,7 @@ class Contract(BaseModel):
 
 def load(path: Path) -> Contract:
     raw = yaml.safe_load(path.read_text())
+    if not raw:
+        raise ValueError(f"{path.name} is empty")
     body = {k: raw[k] for k in ("delivery", "format", "identity", "columns")}
     return Contract(**raw["contract"], **body, rules=raw.get("rules", []))

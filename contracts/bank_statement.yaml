@@ -1,0 +1,46 @@
+contract:
+  name: bank_statement
+  version: 1.0.0
+  owner: treasury@example.com
+  source_system: bank_one
+
+delivery:
+  method: sftp_pull
+  path: /outbound/statements/
+  filename_pattern: 'bank_one_statement_(?P<business_date>\d{8})_(?P<statement_id>ST-\d{8})_v(?P<version>\d+)\.csv'
+  completion_marker: '{filename}.done'
+  checksum_sidecar: '{filename}.sha256'
+  cadence: daily
+  expected_by: { time: '06:00', timezone: Asia/Karachi }
+  business_date_timezone: Asia/Karachi
+
+format:
+  type: csv
+  planned_format: camt.053
+  encoding: utf-8
+  delimiter: ','
+  header: true
+
+identity:
+  file_key:   [source_system, business_date, statement_id, version]
+  record_key: [bank_ref]
+
+columns:
+  - { name: statement_id,    type: string,  nullable: false }
+  - { name: bank_ref,        type: string,  nullable: false }
+  - { name: account_id,      type: string,  nullable: false }
+  - { name: value_date,      type: date,    nullable: false }
+  - { name: booking_date,    type: date,    nullable: false }
+  - { name: currency,        type: string,  nullable: false, allowed: [USD, EUR, GBP] }
+  - { name: amount_minor,    type: integer, nullable: false }
+  - { name: counterparty,    type: string,  nullable: false }
+  - { name: remittance_info, type: string,  nullable: true }
+
+rules:
+  - { id: remittance_contains_payout_ref,    scope: row, description: "A credit from the card company must contain 'PAYOUT <payout_id>'" }
+  - { id: value_date_not_after_booking_date, scope: row, description: "value_date <= booking_date" }
+
+changes:
+  notice_days: 0
+  additive: "follow the bank's release notes"
+  breaking: "major version bump; requires a pull request to this file"

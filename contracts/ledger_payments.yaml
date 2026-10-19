@@ -1,0 +1,40 @@
+contract:
+  name: ledger_payments
+  version: 1.0.0
+  owner: ledger-team@example.com
+  source_system: shop_ledger
+
+delivery:
+  method: s3_inbox
+  path: inbox/shop_ledger/
+  filename_pattern: 'shop_ledger_payments_(?P<business_date>\d{8})_(?P<extract_id>EX\d{6})_v(?P<version>\d+)\.parquet'
+  completion_marker: '{filename}.done'
+  cadence: daily
+  expected_by: { time: '02:00', timezone: Asia/Karachi }
+  business_date_timezone: UTC
+
+format:
+  type: parquet
+
+identity:
+  file_key:   [source_system, business_date, extract_id, version]
+  record_key: [ledger_txn_id]
+
+columns:
+  - { name: extract_id,    type: string,    nullable: false }
+  - { name: ledger_txn_id, type: string,    nullable: false }
+  - { name: payment_id,    type: string,    nullable: false }
+  - { name: event_type,    type: string,    nullable: false, allowed: [CAPTURE, REFUND] }
+  - { name: event_ts_utc,  type: timestamp, nullable: false }
+  - { name: currency,      type: string,    nullable: false, allowed: [USD, EUR, GBP] }
+  - { name: amount_minor,  type: integer,   nullable: false }
+  - { name: psp_reference, type: string,    nullable: true, description: "Card company's reference; sometimes missing" }
+
+rules:
+  - { id: sign_matches_event_type, scope: row,  description: "CAPTURE > 0; REFUND < 0" }
+  - { id: ledger_txn_id_unique,    scope: file, description: "No ledger_txn_id appears twice in a file" }
+
+changes:
+  notice_days: 14
+  additive: "minor version bump; accepted automatically"
+  breaking: "major version bump; requires a pull request to this file"
