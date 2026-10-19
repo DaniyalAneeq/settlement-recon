@@ -1,0 +1,25 @@
+# Two pretend partner SFTP servers. They only READ the generator's files (:ro).
+services:
+  psp_alpha:
+    image: atmoz/sftp:alpine
+    container_name: sftp-psp-alpha
+    command: psp_alpha::1001            # user "psp_alpha", no password: key login only
+    ports: ["2222:22"]
+    volumes:
+      - ../data/sftp/psp_alpha/outbound:/home/psp_alpha/outbound:ro
+      - ./keys/recon_client.pub:/home/psp_alpha/.ssh/keys/recon_client.pub:ro
+      - ./hostkeys/psp_alpha/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
+      - ./hostkeys/psp_alpha/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
+    restart: unless-stopped
+
+  bank_one:
+    image: atmoz/sftp:alpine
+    container_name: sftp-bank-one
+    command: bank_one::1001
+    ports: ["2223:22"]
+    volumes:
+      - ../data/sftp/bank_one/outbound:/home/bank_one/outbound:ro
+      - ./keys/recon_client.pub:/home/bank_one/.ssh/keys/recon_client.pub:ro
+      - ./hostkeys/bank_one/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
+      - ./hostkeys/bank_one/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
+    restart: unless-stopped
