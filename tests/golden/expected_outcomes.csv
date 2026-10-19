@@ -1,0 +1,8 @@
+case,ledger_id,processor_id,bank_ref,status,tier,reason_code,variance_minor
+clean_capture,L1,P1,,MATCHED,1,,0
+fee_overcharge,L2,P2,,MATCHED,1,FEE_VARIANCE,30
+fx_rounding,L3,P3,,MATCHED,2,,1
+refund,L4,P4,,MATCHED,1,,0
+late_capture,L5,,,PENDING,,,
+unbooked_capture,,P6,,BREAK,,MISSING_IN_LEDGER,4000
+batch_payout,,B000001,BANK-7781,MATCHED,3,,0

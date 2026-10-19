@@ -1,0 +1,7 @@
+settlement_batch_id,psp_reference,merchant_reference,record_type,transaction_date,settlement_date,currency,gross_amount_minor,fee_amount_minor,net_amount_minor,payout_id
+B000001,P1,L1,CAPTURE,2026-10-14,2026-10-15,USD,10000,290,9710,PO-1
+B000001,P2,L2,CAPTURE,2026-10-14,2026-10-15,USD,5000,175,4825,PO-1
+B000001,P3,L3,CAPTURE,2026-10-14,2026-10-15,USD,2001,58,1943,PO-1
+B000001,P4,L4,REFUND,2026-10-14,2026-10-15,USD,-1000,0,-1000,PO-1
+B000001,P6,,CAPTURE,2026-10-14,2026-10-15,USD,4000,116,3884,PO-1
+TRAILER,5,20001,639,19362,,,,,,

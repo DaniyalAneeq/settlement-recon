@@ -1,0 +1,2 @@
+statement_id,bank_ref,account_id,value_date,booking_date,currency,amount_minor,counterparty,remittance_info
+ST-20261016,BANK-7781,ACC-001,2026-10-16,2026-10-16,USD,19362,PSP ALPHA LTD,PAYOUT PO-1 BATCH B000001
